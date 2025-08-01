@@ -43,52 +43,52 @@ variable "private_subnet_cidrs" {
   default     = ["10.0.10.0/24", "10.0.20.0/24"]
 }
 
-# # Instance configuration
-# variable "instance_type" {
-#   description = "EC2 instance type"
-#   type        = string
-#   default     = "t2.micro"
-# }
+# Instance configuration
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
 
-# variable "min_size" {
-#   description = "Minimum number of instances in ASG"
-#   type        = number
-#   default     = 2
-# }
+variable "min_size" {
+  description = "Minimum number of instances in ASG"
+  type        = number
+  default     = 2
+}
 
-# variable "max_size" {
-#   description = "Maximum number of instances in ASG"
-#   type        = number
-#   default     = 4
-# }
+variable "max_size" {
+  description = "Maximum number of instances in ASG"
+  type        = number
+  default     = 4
+}
 
-# variable "desired_capacity" {
-#   description = "Desired number of instances in ASG"
-#   type        = number
-#   default     = 2
-# }
+variable "desired_capacity" {
+  description = "Desired number of instances in ASG"
+  type        = number
+  default     = 2
+}
 
-# # Database configuration
-# variable "db_instance_class" {
-#   description = "RDS instance class"
-#   type        = string
-#   default     = "db.t2.micro"
-# }
+# Database configuration
+variable "db_instance_class" {
+  description = "RDS instance class"
+  type        = string
+  default     = "db.t2.micro"
+}
 
-# variable "db_name" {
-#   description = "Database name"
-#   type        = string
-#   default     = "webappdb"
-# }
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default     = "webappdb"
+}
 
-# variable "db_username" {
-#   description = "Database username"
-#   type        = string
-#   default     = "admin"
-# }
+variable "db_username" {
+  description = "Database username"
+  type        = string
+  default     = "admin"
+}
 
-# variable "db_password" {
-#   description = "Database password"
-#   type        = string
-#   sensitive   = true
-# }
+variable "db_password" {
+  description = "Database password"
+  type        = string
+  sensitive   = true
+}
