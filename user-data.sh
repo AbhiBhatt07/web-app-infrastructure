@@ -12,7 +12,10 @@ yum install -y mysql
 systemctl start httpd
 systemctl enable httpd
 
-# Create a simple web page
+# Wait a bit to make sure everything starts properly
+sleep 10
+
+# Create a simple web page with EC2 metadata info
 cat > /var/www/html/index.html << 'EOF'
 <!DOCTYPE html>
 <html>
@@ -44,32 +47,30 @@ cat > /var/www/html/index.html << 'EOF'
     </div>
 
     <script>
-        // Fetch EC2 metadata
-        fetch('http://169.254.169.254/latest/meta-data/instance-id')
-            .then(response => response.text())
-            .then(data => document.getElementById('instance-id').textContent = data)
-            .catch(error => document.getElementById('instance-id').textContent = 'Unable to fetch');
+        async function fetchMetadata(path, elementId) {
+            try {
+                const response = await fetch('http://169.254.169.254/latest/meta-data/' + path);
+                const data = await response.text();
+                document.getElementById(elementId).textContent = data;
+            } catch (err) {
+                document.getElementById(elementId).textContent = 'Unable to fetch';
+            }
+        }
 
-        fetch('http://169.254.169.254/latest/meta-data/placement/availability-zone')
-            .then(response => response.text())
-            .then(data => document.getElementById('az').textContent = data)
-            .catch(error => document.getElementById('az').textContent = 'Unable to fetch');
-
-        fetch('http://169.254.169.254/latest/meta-data/local-ipv4')
-            .then(response => response.text())
-            .then(data => document.getElementById('local-ip').textContent = data)
-            .catch(error => document.getElementById('local-ip').textContent = 'Unable to fetch');
+        fetchMetadata('instance-id', 'instance-id');
+        fetchMetadata('placement/availability-zone', 'az');
+        fetchMetadata('local-ipv4', 'local-ip');
     </script>
 </body>
 </html>
 EOF
 
-# Set proper permissions
-chown apache:apache /var/www/html/index.html
-chmod 644 /var/www/html/index.html
-
-# Create a health check endpoint
+# Create health check file
 echo "OK" > /var/www/html/health
 
-# Restart Apache to ensure everything is loaded
+# Set correct permissions
+chown apache:apache /var/www/html/index.html /var/www/html/health
+chmod 644 /var/www/html/index.html /var/www/html/health
+
+# Restart Apache again to make sure everything is loaded properly
 systemctl restart httpd

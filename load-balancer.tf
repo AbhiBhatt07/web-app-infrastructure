@@ -4,7 +4,7 @@ resource "aws_lb" "main" {
   internal           = false  # Internet-facing
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets           = aws_subnet.public[*].id
+  subnets            = aws_subnet.public[*].id
 
   enable_deletion_protection = false  # Set to true in production
 
@@ -15,33 +15,32 @@ resource "aws_lb" "main" {
 
 # Target Group for Web Servers
 resource "aws_lb_target_group" "web" {
-  name     = "${var.project_name}-web-tg"
-  port     = 80
+  name     = "${var.project_name}-${var.environment}-tg"
+  port     = 80  # Ensure your app is listening on port 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
-  # Health check configuration
   health_check {
     enabled             = true
-    healthy_threshold   = 2      # Number of consecutive successful checks
-    interval            = 30     # Seconds between checks
-    matcher             = "200"  # Expected HTTP response code
-    path                = "/"    # Health check path
+    healthy_threshold   = 2
+    interval            = 30
+    matcher             = "200"
+    path                = "/"  # Update this if your app has a health endpoint
     port                = "traffic-port"
     protocol            = "HTTP"
-    timeout             = 5      # Seconds to wait for response
-    unhealthy_threshold = 2      # Number of consecutive failed checks
+    timeout             = 5
+    unhealthy_threshold = 2
   }
 
   tags = merge(local.common_tags, {
-    Name = "${var.project_name}-${var.environment}-web-tg"
+    Name = "${var.project_name}-${var.environment}-tg"
   })
 }
 
-# Load Balancer Listener
+# Listener for Load Balancer (HTTP:80)
 resource "aws_lb_listener" "web" {
   load_balancer_arn = aws_lb.main.arn
-  port              = "80"
+  port              = 80
   protocol          = "HTTP"
 
   default_action {
@@ -50,6 +49,6 @@ resource "aws_lb_listener" "web" {
   }
 
   tags = merge(local.common_tags, {
-    Name = "${var.project_name}-${var.environment}-web-listener"
+    Name = "${var.project_name}-${var.environment}-listener"
   })
 }
