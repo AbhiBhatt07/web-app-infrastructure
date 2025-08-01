@@ -15,7 +15,7 @@ variable "availability_zones" {
 variable "project_name" {
   description = "Name prefix for all resources"
   type        = string
-  default     = "web-app-infrastructure"
+  default     = "mywebapp"
 }
 
 variable "environment" {
